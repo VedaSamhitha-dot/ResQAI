@@ -70,21 +70,25 @@ USER_AGENT = (
 # GEOCODE LOCATION
 # ============================================================
 
+@st.cache_data(ttl=3600)
 def geocode_location(location):
 
-    url = (
-        f"{NOMINATIM_URL}/search"
-    )
+    url = f"{NOMINATIM_URL}/search"
 
     params = {
-        "q": location,
-        "format": "json",
+        "q": f"{location}, India",
+        "format": "jsonv2",
         "limit": 1,
-        "addressdetails": 1
+        "addressdetails": 1,
+        "countrycodes": "in",
+        "accept-language": "en"
     }
 
     headers = {
-        "User-Agent": USER_AGENT
+        "User-Agent": (
+            "ResQAI-Disaster-Response/1.0 "
+            "(educational-project)"
+        )
     }
 
     try:
@@ -93,7 +97,7 @@ def geocode_location(location):
             url,
             params=params,
             headers=headers,
-            timeout=10
+            timeout=15
         )
 
         response.raise_for_status()
@@ -108,14 +112,29 @@ def geocode_location(location):
         return {
             "lat": float(result["lat"]),
             "lon": float(result["lon"]),
-            "display_name": result["display_name"],
+            "display_name": result.get(
+                "display_name",
+                location
+            ),
             "address": result.get(
                 "address",
                 {}
             )
         }
 
-    except requests.RequestException:
+    except requests.RequestException as e:
+
+        print(
+            f"Geocoding error: {e}"
+        )
+
+        return None
+
+    except (ValueError, KeyError) as e:
+
+        print(
+            f"Geocoding data error: {e}"
+        )
 
         return None
 
@@ -124,22 +143,25 @@ def geocode_location(location):
 # REVERSE GEOCODE
 # ============================================================
 
+@st.cache_data(ttl=3600)
 def reverse_geocode(lat, lon):
 
-    url = (
-        f"{NOMINATIM_URL}/reverse"
-    )
+    url = f"{NOMINATIM_URL}/reverse"
 
     params = {
         "lat": lat,
         "lon": lon,
         "format": "jsonv2",
         "zoom": 10,
-        "addressdetails": 1
+        "addressdetails": 1,
+        "accept-language": "en"
     }
 
     headers = {
-        "User-Agent": USER_AGENT
+        "User-Agent": (
+            "ResQAI-Disaster-Response/1.0 "
+            "(educational-project)"
+        )
     }
 
     try:
@@ -148,7 +170,7 @@ def reverse_geocode(lat, lon):
             url,
             params=params,
             headers=headers,
-            timeout=10
+            timeout=15
         )
 
         response.raise_for_status()
@@ -169,7 +191,19 @@ def reverse_geocode(lat, lon):
             )
         }
 
-    except requests.RequestException:
+    except requests.RequestException as e:
+
+        print(
+            f"Reverse geocoding error: {e}"
+        )
+
+        return None
+
+    except (ValueError, KeyError) as e:
+
+        print(
+            f"Reverse geocoding data error: {e}"
+        )
 
         return None
 
@@ -241,6 +275,7 @@ def destination_point(
 # CHECK LAND LOCATION
 # ============================================================
 
+@st.cache_data(ttl=3600)
 def is_land_location(
     lat,
     lon
@@ -268,10 +303,7 @@ def is_land_location(
         .lower()
     )
 
-    if country_code == "in":
-        return True
-
-    return False
+    return country_code == "in"
 
 
 # ============================================================
@@ -283,18 +315,17 @@ def detect_inland_bearing(
     lon
 ):
 
+    # Test the four major directions first.
+    # This keeps the number of Nominatim
+    # requests much lower.
+
     directions = {
         "N": 0,
-        "NE": 45,
         "E": 90,
-        "SE": 135,
         "S": 180,
-        "SW": 225,
-        "W": 270,
-        "NW": 315
+        "W": 270
     }
 
-    water_directions = []
     land_directions = []
 
     test_distance = 15
@@ -310,80 +341,23 @@ def detect_inland_bearing(
             )
         )
 
-        land = is_land_location(
+        if is_land_location(
             test_lat,
             test_lon
-        )
-
-        if land:
+        ):
 
             land_directions.append(
-                name
+                bearing
             )
 
-        else:
-
-            water_directions.append(
-                name
-            )
-
-        time.sleep(0.2)
-
-    if water_directions:
-
-        water_bearings = [
-            directions[d]
-            for d in water_directions
-        ]
-
-        best_inland_bearing = None
-        best_score = -1
-
-        for water_bearing in water_bearings:
-
-            inland_bearing = (
-                water_bearing + 180
-            ) % 360
-
-            inland_lat, inland_lon = (
-                destination_point(
-                    lat,
-                    lon,
-                    20,
-                    inland_bearing
-                )
-            )
-
-            if is_land_location(
-                inland_lat,
-                inland_lon
-            ):
-
-                score = 2
-
-            else:
-
-                score = 0
-
-            if score > best_score:
-
-                best_score = score
-
-                best_inland_bearing = (
-                    inland_bearing
-                )
-
-            time.sleep(0.2)
-
-        if best_inland_bearing is not None:
-
-            return best_inland_bearing
+    # If land was found, use the first
+    # confirmed land direction.
 
     if land_directions:
 
-        return directions[
-            land_directions[0]
-        ]
+        return land_directions[0]
+
+    # Fallback direction.
 
     return 270
 
@@ -758,17 +732,11 @@ if "emergency_locations" not in st.session_state:
 with st.sidebar:
 
     st.markdown(
-        """
-        <div style="padding: 10px 4px 18px 4px;">
-            <div style="font-size: 20px; font-weight: 800; color: #ffffff;">
-                🚨 Disaster Response
-            </div>
-            <div style="font-size: 12px; color: #94a3b8; margin-top: 6px; line-height: 1.5;">
-                AI-powered emergency decision support
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
+        "## 🚨 Disaster Response"
+    )
+
+    st.write(
+        "AI-Powered Decision Support"
     )
 
     st.divider()
@@ -941,17 +909,17 @@ with st.sidebar:
 # ============================================================
 
 st.markdown(
-    """
-    <div class="dashboard-header">
-        <div class="dashboard-title">
-            AI-ASSISTED DISASTER RESPONSE<br>
-            AND RESOURCE RECOMMENDATION SYSTEM
-        </div>
-        <div class="dashboard-subtitle">
-            AI-powered risk assessment, emergency response planning, resource recommendation and interactive evacuation mapping
-        </div>
-    </div>
-    """,
+    '<div class="dashboard-title">'
+    '🚨 AI-Assisted Multi-Disaster Response System'
+    '</div>',
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    '<div class="dashboard-subtitle">'
+    'AI-based disaster risk prediction and '
+    'emergency response decision support'
+    '</div>',
     unsafe_allow_html=True
 )
 
@@ -2056,7 +2024,8 @@ if st.session_state.prediction_done:
     st.markdown(
 
         '<div class="dashboard-footer">'
-        'AI-Assisted Disaster Response and Resource Recommendation System'
+        'AI-Assisted Multi-Disaster Risk Assessment & '
+        'Emergency Decision Support Prototype'
         '</div>',
 
         unsafe_allow_html=True
@@ -2078,32 +2047,21 @@ else:
 
 
     st.markdown(
-        '<div class="section-heading">🧠 System Workflow</div>',
-        unsafe_allow_html=True
+        """
+        ### 🧠 System Workflow
+
+        **1. Input** → Disaster-specific environmental conditions
+
+        **2. Location** → User enters the affected location
+
+        **3. AI Analysis** → Appropriate Random Forest model predicts risk
+
+        **4. Response Planning** → Emergency actions and resources are recommended
+
+        **5. Emergency Location Planning** → Prototype rescue and relief locations are generated
+
+        **6. Route Planning** → Road-based evacuation route is generated
+
+        **7. Decision Support** → Relief camp, rescue support and interactive map
+        """
     )
-
-    workflow = [
-        ("01", "Input", "Disaster-specific environmental conditions are entered."),
-        ("02", "Location", "The affected location is geocoded automatically."),
-        ("03", "AI Analysis", "The appropriate Random Forest model predicts disaster risk."),
-        ("04", "Response Planning", "Emergency actions and resource requirements are recommended."),
-        ("05", "Emergency Locations", "Prototype rescue, relief and medical locations are generated."),
-        ("06", "Route Planning", "A road-based evacuation route is generated using OSRM."),
-        ("07", "Decision Support", "The final plan is presented with an interactive emergency map."),
-    ]
-
-    for number, title, description in workflow:
-        st.markdown(
-            f"""
-            <div class="info-card" style="padding: 15px 18px; margin-bottom: 10px;">
-                <div style="display:flex; gap:14px; align-items:flex-start;">
-                    <div style="font-size:13px; font-weight:800; color:#ef4444; min-width:28px;">{number}</div>
-                    <div>
-                        <div style="font-size:16px; font-weight:750; color:#ffffff;">{title}</div>
-                        <div style="font-size:14px; color:#94a3b8; margin-top:4px;">{description}</div>
-                    </div>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
