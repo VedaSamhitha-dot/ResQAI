@@ -1,0 +1,543 @@
+/* ============================================================
+   AI-ASSISTED DISASTER RESPONSE
+   AND RESOURCE RECOMMENDATION SYSTEM
+   ============================================================ */
+
+
+/* ============================================================
+   GLOBAL
+   ============================================================ */
+
+html,
+body,
+[class*="css"] {
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+
+/* Main application background */
+
+.stApp {
+    background:
+        linear-gradient(
+            135deg,
+            #07111f 0%,
+            #0b1728 45%,
+            #111827 100%
+        );
+    color: #f8fafc;
+}
+
+
+/* Remove excessive top spacing */
+
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+    max-width: 1500px;
+}
+
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
+[data-testid="stSidebar"] {
+    background:
+        linear-gradient(
+            180deg,
+            #0b1220 0%,
+            #111827 100%
+        );
+
+    border-right: 1px solid #243244;
+}
+
+
+[data-testid="stSidebar"] * {
+    color: #e5e7eb;
+}
+
+
+/* Sidebar headings */
+
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3 {
+    color: #ffffff;
+}
+
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.dashboard-header {
+    padding: 28px 32px;
+    margin-bottom: 25px;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #111c2e,
+            #17263b
+        );
+
+    border: 1px solid #26384f;
+
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.25);
+}
+
+
+.dashboard-title {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+
+    color: #ffffff;
+
+    margin: 0;
+}
+
+
+.dashboard-subtitle {
+    margin-top: 10px;
+
+    font-size: 16px;
+
+    color: #94a3b8;
+
+    line-height: 1.6;
+}
+
+
+/* ============================================================
+   SECTION HEADINGS
+   ============================================================ */
+
+.section-heading {
+    font-size: 23px;
+    font-weight: 750;
+
+    color: #f8fafc;
+
+    margin-top: 25px;
+    margin-bottom: 16px;
+
+    padding-left: 12px;
+
+    border-left: 4px solid #ef4444;
+}
+
+
+/* ============================================================
+   RISK CARDS
+   ============================================================ */
+
+.risk-card {
+    min-height: 125px;
+
+    padding: 22px;
+
+    border-radius: 16px;
+
+    background: #111c2e;
+
+    border: 1px solid #26384f;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.20);
+}
+
+
+.risk-card-title {
+    font-size: 13px;
+
+    color: #94a3b8;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 10px;
+}
+
+
+.risk-card-value {
+    font-size: 29px;
+
+    font-weight: 800;
+
+    color: #ffffff;
+}
+
+
+.risk-high {
+    border-left: 5px solid #ef4444;
+}
+
+
+.risk-medium {
+    border-left: 5px solid #f59e0b;
+}
+
+
+.risk-low {
+    border-left: 5px solid #22c55e;
+}
+
+
+/* ============================================================
+   INFORMATION CARDS
+   ============================================================ */
+
+.info-card {
+    padding: 22px;
+
+    border-radius: 16px;
+
+    background: #111c2e;
+
+    border: 1px solid #26384f;
+
+    color: #e5e7eb;
+
+    margin-bottom: 15px;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.18);
+}
+
+
+.info-card h3 {
+    color: #ffffff;
+
+    margin-top: 0;
+}
+
+
+.info-card p {
+    color: #94a3b8;
+
+    line-height: 1.6;
+}
+
+
+/* ============================================================
+   RECOMMENDATION BOX
+   ============================================================ */
+
+.recommendation-box {
+    padding: 17px 20px;
+
+    margin-bottom: 12px;
+
+    border-radius: 12px;
+
+    background: #111c2e;
+
+    border: 1px solid #26384f;
+
+    color: #e5e7eb;
+
+    min-height: 55px;
+
+    display: flex;
+
+    align-items: center;
+
+    box-shadow:
+        0 5px 18px rgba(0, 0, 0, 0.15);
+}
+
+
+.recommendation-box:hover {
+    border-color: #475569;
+
+    transform: translateY(-1px);
+
+    transition: 0.2s ease;
+}
+
+
+/* ============================================================
+   RELIEF CAMP
+   ============================================================ */
+
+.camp-box {
+    padding: 24px;
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0f2a22,
+            #10251f
+        );
+
+    border: 1px solid #166534;
+
+    margin-bottom: 18px;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.18);
+}
+
+
+.camp-box h3 {
+    color: #4ade80;
+
+    margin-top: 0;
+
+    font-size: 21px;
+}
+
+
+.camp-box p {
+    color: #a7f3d0;
+}
+
+
+/* ============================================================
+   EVACUATION
+   ============================================================ */
+
+.evacuation-box {
+    padding: 22px;
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #101f36,
+            #122642
+        );
+
+    border: 1px solid #2563eb;
+
+    color: #dbeafe;
+
+    font-size: 17px;
+
+    font-weight: 650;
+
+    text-align: center;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.18);
+}
+
+
+/* ============================================================
+   MAP
+   ============================================================ */
+
+.map-container {
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    border: 1px solid #334155;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+
+/* ============================================================
+   METRICS
+   ============================================================ */
+
+[data-testid="stMetric"] {
+    background: #111c2e;
+
+    padding: 18px;
+
+    border-radius: 14px;
+
+    border: 1px solid #26384f;
+
+    box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+
+[data-testid="stMetricLabel"] {
+    color: #94a3b8 !important;
+}
+
+
+[data-testid="stMetricValue"] {
+    color: #ffffff !important;
+
+    font-weight: 750;
+}
+
+
+/* ============================================================
+   INPUT FIELDS
+   ============================================================ */
+
+[data-testid="stSidebar"] input,
+[data-testid="stSidebar"] textarea {
+
+    background-color: #172235 !important;
+
+    color: #ffffff !important;
+
+    border: 1px solid #334155 !important;
+
+    border-radius: 9px !important;
+}
+
+
+[data-testid="stSidebar"] input:focus {
+
+    border-color: #3b82f6 !important;
+
+    box-shadow:
+        0 0 0 1px #3b82f6 !important;
+}
+
+
+/* Select boxes */
+
+[data-testid="stSidebar"] [data-baseweb="select"] > div {
+
+    background-color: #172235 !important;
+
+    border-color: #334155 !important;
+
+    color: #ffffff !important;
+
+    border-radius: 9px !important;
+}
+
+
+/* ============================================================
+   BUTTON
+   ============================================================ */
+
+.stButton > button {
+
+    width: 100%;
+
+    height: 52px;
+
+    border-radius: 11px;
+
+    border: none;
+
+    background:
+        linear-gradient(
+            135deg,
+            #dc2626,
+            #ef4444
+        );
+
+    color: #ffffff;
+
+    font-size: 15px;
+
+    font-weight: 750;
+
+    letter-spacing: 0.3px;
+
+    box-shadow:
+        0 6px 20px rgba(239, 68, 68, 0.25);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.stButton > button:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 25px rgba(239, 68, 68, 0.35);
+
+    background:
+        linear-gradient(
+            135deg,
+            #b91c1c,
+            #dc2626
+        );
+}
+
+
+/* ============================================================
+   ALERTS
+   ============================================================ */
+
+[data-testid="stAlert"] {
+
+    border-radius: 12px !important;
+
+    border-width: 1px !important;
+}
+
+
+/* ============================================================
+   DIVIDER
+   ============================================================ */
+
+hr {
+
+    border: none;
+
+    border-top: 1px solid #26384f;
+
+    margin-top: 25px;
+
+    margin-bottom: 25px;
+}
+
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+.dashboard-footer {
+
+    text-align: center;
+
+    padding: 30px 20px;
+
+    margin-top: 35px;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    border-top: 1px solid #1e293b;
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 900px) {
+
+    .dashboard-title {
+        font-size: 27px;
+    }
+
+    .dashboard-header {
+        padding: 22px;
+    }
+
+    .section-heading {
+        font-size: 20px;
+    }
+
+}
