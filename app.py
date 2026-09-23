@@ -4,7 +4,6 @@ import joblib
 import folium
 import requests
 import math
-import time
 
 from streamlit_folium import st_folium
 from pathlib import Path
@@ -15,7 +14,7 @@ from pathlib import Path
 # ============================================================
 
 st.set_page_config(
-    page_title="AI Multi-Disaster Response",
+    page_title="ResQAI",
     page_icon="🚨",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -59,10 +58,6 @@ NOMINATIM_URL = (
 
 OSRM_URL = (
     "https://router.project-osrm.org"
-)
-
-USER_AGENT = (
-    "AI-Multi-Disaster-Response-Project/1.0"
 )
 
 
@@ -315,10 +310,6 @@ def detect_inland_bearing(
     lon
 ):
 
-    # Test the four major directions first.
-    # This keeps the number of Nominatim
-    # requests much lower.
-
     directions = {
         "N": 0,
         "E": 90,
@@ -350,14 +341,9 @@ def detect_inland_bearing(
                 bearing
             )
 
-    # If land was found, use the first
-    # confirmed land direction.
-
     if land_directions:
 
         return land_directions[0]
-
-    # Fallback direction.
 
     return 270
 
@@ -910,15 +896,16 @@ with st.sidebar:
 
 st.markdown(
     '<div class="dashboard-title">'
-    '🚨 AI-Assisted Multi-Disaster Response System'
+    'AI-ASSISTED DISASTER RESPONSE AND '
+    'RESOURCE RECOMMENDATION SYSTEM'
     '</div>',
     unsafe_allow_html=True
 )
 
 st.markdown(
     '<div class="dashboard-subtitle">'
-    'AI-based disaster risk prediction and '
-    'emergency response decision support'
+    'AI-powered risk assessment, emergency response planning, '
+    'resource recommendation and interactive evacuation mapping'
     '</div>',
     unsafe_allow_html=True
 )
@@ -929,10 +916,6 @@ st.markdown(
 # ============================================================
 
 if predict_button:
-
-    # --------------------------------------------------------
-    # Validate Location
-    # --------------------------------------------------------
 
     if not location_text.strip():
 
@@ -945,10 +928,6 @@ if predict_button:
 
 
     else:
-
-        # ----------------------------------------------------
-        # Geocode Location
-        # ----------------------------------------------------
 
         with st.spinner(
             "📍 Finding disaster location..."
@@ -975,11 +954,6 @@ if predict_button:
             st.session_state.location_data = (
                 location_data
             )
-
-
-            # ------------------------------------------------
-            # SELECT CORRECT MODEL
-            # ------------------------------------------------
 
             selected_model = models[
                 disaster_type
@@ -2024,8 +1998,8 @@ if st.session_state.prediction_done:
     st.markdown(
 
         '<div class="dashboard-footer">'
-        'AI-Assisted Multi-Disaster Risk Assessment & '
-        'Emergency Decision Support Prototype'
+        'AI-Assisted Disaster Response & Resource '
+        'Recommendation System'
         '</div>',
 
         unsafe_allow_html=True
